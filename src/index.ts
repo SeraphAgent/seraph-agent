@@ -24,6 +24,7 @@ import {
 } from "@ai16z/eliza";
 import { bootstrapPlugin } from "@ai16z/plugin-bootstrap";
 import { solanaPlugin } from "@ai16z/plugin-solana";
+import { bitmindPlugin } from "./plugins/bitmind/index.js";
 import { nodePlugin } from "@ai16z/plugin-node";
 import Database from "better-sqlite3";
 import fs from "fs";
@@ -38,8 +39,7 @@ const __filename = fileURLToPath(import.meta.url); // get the resolved path to t
 const __dirname = path.dirname(__filename); // get the name of the directory
 
 export const wait = (minTime: number = 1000, maxTime: number = 3000) => {
-  const waitTime =
-    Math.floor(Math.random() * (maxTime - minTime + 1)) + minTime;
+  const waitTime = Math.floor(Math.random() * (maxTime - minTime + 1)) + minTime;
   return new Promise((resolve) => setTimeout(resolve, waitTime));
 };
 
@@ -64,9 +64,7 @@ export function parseArguments(): {
   }
 }
 
-export async function loadCharacters(
-  charactersArg: string
-): Promise<Character[]> {
+export async function loadCharacters(charactersArg: string): Promise<Character[]> {
   let characterPaths = charactersArg?.split(",").map((filePath) => {
     if (path.basename(filePath) === filePath) {
       filePath = "../characters/" + filePath;
@@ -100,15 +98,10 @@ export async function loadCharacters(
   return loadedCharacters;
 }
 
-export function getTokenForProvider(
-  provider: ModelProviderName,
-  character: Character
-) {
+export function getTokenForProvider(provider: ModelProviderName, character: Character) {
   switch (provider) {
     case ModelProviderName.OPENAI:
-      return (
-        character.settings?.secrets?.OPENAI_API_KEY || settings.OPENAI_API_KEY
-      );
+      return character.settings?.secrets?.OPENAI_API_KEY || settings.OPENAI_API_KEY;
     case ModelProviderName.LLAMACLOUD:
       return (
         character.settings?.secrets?.LLAMACLOUD_API_KEY ||
@@ -128,19 +121,13 @@ export function getTokenForProvider(
         settings.CLAUDE_API_KEY
       );
     case ModelProviderName.REDPILL:
-      return (
-        character.settings?.secrets?.REDPILL_API_KEY || settings.REDPILL_API_KEY
-      );
+      return character.settings?.secrets?.REDPILL_API_KEY || settings.REDPILL_API_KEY;
     case ModelProviderName.OPENROUTER:
-      return (
-        character.settings?.secrets?.OPENROUTER || settings.OPENROUTER_API_KEY
-      );
+      return character.settings?.secrets?.OPENROUTER || settings.OPENROUTER_API_KEY;
     case ModelProviderName.GROK:
       return character.settings?.secrets?.GROK_API_KEY || settings.GROK_API_KEY;
     case ModelProviderName.HEURIST:
-      return (
-        character.settings?.secrets?.HEURIST_API_KEY || settings.HEURIST_API_KEY
-      );
+      return character.settings?.secrets?.HEURIST_API_KEY || settings.HEURIST_API_KEY;
     case ModelProviderName.GROQ:
       return character.settings?.secrets?.GROQ_API_KEY || settings.GROQ_API_KEY;
   }
@@ -153,18 +140,14 @@ function initializeDatabase(dataDir: string) {
     });
     return db;
   } else {
-    const filePath =
-      process.env.SQLITE_FILE ?? path.resolve(dataDir, "db.sqlite");
+    const filePath = process.env.SQLITE_FILE ?? path.resolve(dataDir, "db.sqlite");
     // ":memory:";
     const db = new SqliteDatabaseAdapter(new Database(filePath));
     return db;
   }
 }
 
-export async function initializeClients(
-  character: Character,
-  runtime: IAgentRuntime
-) {
+export async function initializeClients(character: Character, runtime: IAgentRuntime) {
   const clients = [];
   const clientTypes = character.clients?.map((str) => str.toLowerCase()) || [];
 
@@ -200,28 +183,16 @@ export async function initializeClients(
   return clients;
 }
 
-export function createAgent(
-  character: Character,
-  db: IDatabaseAdapter,
-  cache: ICacheManager,
-  token: string
-) {
-  elizaLogger.success(
-    elizaLogger.successesTitle,
-    "Creating runtime for character",
-    character.name
-  );
+export function createAgent(character: Character, db: IDatabaseAdapter, cache: ICacheManager, token: string) {
+  elizaLogger.success(elizaLogger.successesTitle, "Creating runtime for character", character.name);
   return new AgentRuntime({
     databaseAdapter: db,
     token,
     modelProvider: character.modelProvider,
     evaluators: [],
     character,
-    plugins: [
-      bootstrapPlugin,
-      nodePlugin,
-      character.settings.secrets?.WALLET_PUBLIC_KEY ? solanaPlugin : null,
-    ].filter(Boolean),
+    plugins: [bootstrapPlugin, nodePlugin, character.settings?.secrets?.bitmind ? bitmindPlugin : null, 
+      character.settings?.secrets?.WALLET_PUBLIC_KEY ? solanaPlugin : null].filter(Boolean),
     providers: [],
     actions: [],
     services: [],
@@ -269,10 +240,7 @@ async function startAgent(character: Character, directClient: DirectClient) {
 
     return clients;
   } catch (error) {
-    elizaLogger.error(
-      `Error starting agent for character ${character.name}:`,
-      error
-    );
+    elizaLogger.error(`Error starting agent for character ${character.name}:`, error);
     console.error(error);
     throw error;
   }
@@ -337,18 +305,15 @@ async function handleUserInput(input, agentId) {
   try {
     const serverPort = parseInt(settings.SERVER_PORT || "3000");
 
-    const response = await fetch(
-      `http://localhost:${serverPort}/${agentId}/message`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text: input,
-          userId: "user",
-          userName: "User",
-        }),
-      }
-    );
+    const response = await fetch(`http://localhost:${serverPort}/${agentId}/message`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        text: input,
+        userId: "user",
+        userName: "User",
+      }),
+    });
 
     const data = await response.json();
     data.forEach((message) => console.log(`${"Agent"}: ${message.text}`));

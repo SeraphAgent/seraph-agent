@@ -1,51 +1,79 @@
-# Eliza
+# SERAPH Implementation on Eliza
 
-## Edit the character files
+This is an implementation of SERAPH using the Eliza framework.
 
-Open `agent/src/character.ts` to modify the default character. Uncomment and edit.
+## Quick Start
 
-### Custom characters
-
-To load custom characters instead:
-- Use `pnpm start --characters="path/to/your/character.json"`
-- Multiple character files can be loaded simultaneously
-
-### Add clients
-
-```diff
-- clients: [],
-+ clients: ["twitter", "discord"],
-```
-
-## Duplicate the .env.example template
+1. Duplicate the .env.example template:
 
 ```bash
 cp .env.example .env
 ```
 
-\* Fill out the .env file with your own values.
-
-### Add login credentials and keys to .env
+2. Configure your .env file with required credentials:
 
 ```diff
 -DISCORD_APPLICATION_ID=
 -DISCORD_API_TOKEN= # Bot token
-+DISCORD_APPLICATION_ID="000000772361146438"
-+DISCORD_API_TOKEN="OTk1MTU1NzcyMzYxMT000000.000000.00000000000000000000000000000000"
++DISCORD_APPLICATION_ID="YOUR_DISCORD_APP_ID"
++DISCORD_API_TOKEN="YOUR_DISCORD_BOT_TOKEN"
 ...
 -OPENROUTER_API_KEY=
-+OPENROUTER_API_KEY="sk-xx-xx-xxx"
-...
--TWITTER_USERNAME= # Account username
--TWITTER_PASSWORD= # Account password
--TWITTER_EMAIL= # Account email
-+TWITTER_USERNAME="username"
-+TWITTER_PASSWORD="password"
-+TWITTER_EMAIL="your@email.com"
++OPENROUTER_API_KEY="YOUR_OPENROUTER_KEY"
 ```
 
-## Install dependencies and start your agent
+3. Install dependencies and start SERAPH:
 
 ```bash
-pnpm i && pnpm start
+pnpm i && pnpm start --characters="characters/seraph.character.json"
 ```
+
+## Adding Clients
+
+Enable different platforms by adding them to the clients array:
+
+```diff
+- clients: [],
++ clients: ["discord"], # Add platforms you want to use
+```
+
+## Supported Platforms
+
+SERAPH can be configured to run on:
+
+- Discord
+- Twitter
+- Additional platforms supported by Eliza
+
+## Environment Setup
+
+Each platform requires specific credentials in your .env file:
+
+### Discord
+
+```env
+DISCORD_APPLICATION_ID="YOUR_APP_ID"
+DISCORD_API_TOKEN="YOUR_BOT_TOKEN"
+```
+
+### Twitter
+
+```env
+TWITTER_USERNAME="username"
+TWITTER_PASSWORD="password"
+TWITTER_EMAIL="your@email.com"
+```
+
+### OpenRouter (for AI capabilities)
+
+```env
+OPENROUTER_API_KEY="your-key-here"
+```
+
+## Custom Character Configuration
+
+While this implementation uses the SERAPH character file by default, you can modify the character settings by editing `characters/seraph.character.json` or creating your own character file.
+
+## License
+
+See the LICENSE file for details.
