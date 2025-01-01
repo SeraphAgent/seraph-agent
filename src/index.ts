@@ -24,7 +24,8 @@ import {
 } from "@ai16z/eliza";
 import { bootstrapPlugin } from "@ai16z/plugin-bootstrap";
 import { solanaPlugin } from "@ai16z/plugin-solana";
-import { bitmindPlugin } from "./plugins/bitmind/index.js";
+import { bitmindPlugin } from './plugins/bitmind/index.js';
+import { matrixPlugin } from './plugins/matrix/index.js';
 import { nodePlugin } from "@ai16z/plugin-node";
 import Database from "better-sqlite3";
 import fs from "fs";
@@ -192,6 +193,7 @@ export function createAgent(character: Character, db: IDatabaseAdapter, cache: I
     evaluators: [],
     character,
     plugins: [bootstrapPlugin, nodePlugin, character.settings?.secrets?.bitmind ? bitmindPlugin : null, 
+      character.settings?.secrets?.matrix ? matrixPlugin : null,
       character.settings?.secrets?.WALLET_PUBLIC_KEY ? solanaPlugin : null].filter(Boolean),
     providers: [],
     actions: [],
