@@ -1,12 +1,12 @@
 {
   "name": "Seraph",
   "plugins": [],
-  "clients": ["twitter", "direct"],
+  "clients": ["direct"],
   "modelProvider": "openrouter",
   "settings": {
     "secrets": {
-      "bitmind": "004d79571e0846428e43d6fd92eff15f",
-      "matrix": "abc"
+      "bitmind": "799a5a2480f541f2bdd88b90664cb639",
+      "matrix": "799a5a2480f541f2bdd88b90664cb639"
     },
     "voice": {
       "model": "en_US-hfc_male-medium"

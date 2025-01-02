@@ -16,10 +16,10 @@ const detectMatrix: Action = {
       return false;
     }
 
-    // if (!runtime?.character?.settings?.secrets?.bitmind) {
-    //   elizaLogger.error("❌ Trinity Matrix: API token not configured");
-    //   return false;
-    // }
+    if (!runtime?.character?.settings?.secrets?.bitmind) {
+      elizaLogger.error("❌ Trinity Matrix: API token not configured");
+      return false;
+    }
 
     
 
@@ -46,6 +46,7 @@ const detectMatrix: Action = {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({ url }),
       });
